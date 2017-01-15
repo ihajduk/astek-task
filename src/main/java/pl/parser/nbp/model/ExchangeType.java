@@ -1,4 +1,4 @@
-package pl.parser.nbp.logic;
+package pl.parser.nbp.model;
 
 /**
  * Created by iwha on 1/15/2017.

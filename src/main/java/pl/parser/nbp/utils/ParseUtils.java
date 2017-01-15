@@ -15,7 +15,7 @@ import java.util.Locale;
  * Created by iwha on 1/14/2017.
  */
 @Component
-public class StringParserUtil {
+public class ParseUtils {
 
     public LocalDate parseStringToDate(String dateString) {
         if(dateString==null){
