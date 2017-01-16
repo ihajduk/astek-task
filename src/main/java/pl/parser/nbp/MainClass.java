@@ -1,31 +1,20 @@
 package pl.parser.nbp;
 
-import javafx.util.Pair;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.xml.sax.SAXException;
-import pl.parser.nbp.exceptions.UnregisteredDateException;
-import pl.parser.nbp.logic.CurrencyRatesService;
-import pl.parser.nbp.logic.CurrencyRatesServiceImpl;
+import pl.parser.nbp.model.RatesStatistics;
+import pl.parser.nbp.service.CurrencyRatesService;
+import pl.parser.nbp.service.CurrencyRatesServiceImpl;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.text.ParseException;
-
-/**
- * Created by iwha on 1/14/2017.
- */
 public class MainClass {
-    public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException, ParseException, UnregisteredDateException {
-        String currency = "EUR";
-        String startDate = "2013-01-28";
-        String endDate = "2013-01-31";
-
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.register(SpringConfig.class);
-        context.refresh();
-
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         CurrencyRatesService currencyRatesService = context.getBean(CurrencyRatesServiceImpl.class);
-        Pair<String, String> stringStringPair = currencyRatesService.computeEntryValues(currency, startDate, endDate);
-        System.out.println(stringStringPair.getKey()+"\n"+stringStringPair.getValue());
+
+        String currency = args[0];
+        String startDate = args[1];
+        String endDate = args[2];
+
+        RatesStatistics rateStatistics = currencyRatesService.computeRatesStatistics(currency, startDate, endDate);
+        System.out.println(rateStatistics);
     }
 }

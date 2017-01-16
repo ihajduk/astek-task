@@ -1,44 +1,43 @@
 package pl.parser.nbp.utils;
 
+import com.google.common.base.Preconditions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-/**
- * Created by iwha on 1/14/2017.
- */
 @Component
 public class ParseUtils {
 
+    private static final String NBP_URL_DATE_PATTERN = "yyMMdd";
+    private final NumberFormat commaSeparatedNumberFormat;
+    private final int precision;
+
+    public ParseUtils(@Value("${currency.precision}") int precision) {
+            this.precision = precision;
+            commaSeparatedNumberFormat = NumberFormat.getInstance(Locale.FRANCE);
+            commaSeparatedNumberFormat.setMinimumFractionDigits(precision);
+    }
+
     public LocalDate parseStringToDate(String dateString) {
-        if(dateString==null){
-            throw new NullPointerException("Not enough arguments provided");
-        }
+        Preconditions.checkNotNull(dateString, "String cannot be null");
         return LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
     public String parseDateToUrlFormat(LocalDate date) {
-        LocalDateTime tempDateTime = LocalDateTime.of(date, LocalTime.MIN);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
-        return tempDateTime.format(formatter).substring(0,6);
+        return date.format(DateTimeFormatter.ofPattern(NBP_URL_DATE_PATTERN));
     }
 
-    public String formatValueToCurrencyString(BigDecimal value){
-        NumberFormat currencySeparatorFormat = NumberFormat.getInstance(Locale.FRANCE);
-        currencySeparatorFormat.setMinimumFractionDigits(4);
-        return currencySeparatorFormat.format(value);
+    public String formatValueToCurrencyString(BigDecimal value) {
+        return commaSeparatedNumberFormat.format(value);
     }
 
     public BigDecimal parseValueToCurrency(String value) throws ParseException {
-        NumberFormat currencySeparatorFormat = NumberFormat.getInstance(Locale.FRANCE);
-        return BigDecimal.valueOf(currencySeparatorFormat.parse(value).doubleValue()).setScale(4);
+        return BigDecimal.valueOf(commaSeparatedNumberFormat.parse(value).doubleValue()).setScale(precision, BigDecimal.ROUND_HALF_EVEN);
     }
-
 }
