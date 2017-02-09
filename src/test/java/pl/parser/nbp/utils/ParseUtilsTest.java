@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import pl.parser.nbp.SpringConfig;
@@ -19,6 +20,9 @@ public class ParseUtilsTest {
 
     @Autowired
     ParseUtils parseUtils;
+
+    @Value("${currency.precision}")
+    private int precision;
 
     @Test
     public void shouldParseStringToDate() throws ParseException {
@@ -63,8 +67,6 @@ public class ParseUtilsTest {
         //when
         BigDecimal parsedCurrency = parseUtils.parseStringToCurrency(value);
         //then
-        Assert.assertEquals(BigDecimal.valueOf(3.14).setScale(4, BigDecimal.ROUND_HALF_EVEN), parsedCurrency);
-        //TODO: profile for injecting precision
-        //TODO: UrlUtils mockito usage
+        Assert.assertEquals(BigDecimal.valueOf(3.14).setScale(precision, BigDecimal.ROUND_HALF_EVEN), parsedCurrency);
     }
 }
