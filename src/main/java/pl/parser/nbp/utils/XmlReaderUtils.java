@@ -9,58 +9,56 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import pl.parser.nbp.model.ExchangeType;
+import pl.parser.nbp.model.TableOfCurrencies;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.ws.spi.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Component
 public class XmlReaderUtils {
-
-    private static final String POSITION_TAG_NAME = "pozycja";
-    private static final String CURRENCY_CODE_TAG_NAME = "kod_waluty";
-    private static final String BUYING_RATE = "kurs_kupna";
-    private static final String SELLING_RATE = "kurs_sprzedazy";
-    private final DocumentBuilder db;
 
     private final ParseUtils parseUtils;
 
     @Autowired
     public XmlReaderUtils(ParseUtils parseUtils) throws ParserConfigurationException {
         this.parseUtils = parseUtils;
-        db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
 
     public BigDecimal acquireAvgRateFromXmlFile(String currency, ExchangeType xType, String body) {
-        try{
-        Document dom = db.parse(new InputSource(new ByteArrayInputStream(body.getBytes("UTF-8"))));
-        NodeList nl = dom.getElementsByTagName(POSITION_TAG_NAME);
-        if (nl != null) {
-            int length = nl.getLength();
-            for (int i = 0; i < length; i++) {
-                if (nl.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                    Element el = (Element) nl.item(i);
-                    if(currency.equals(el.getElementsByTagName(CURRENCY_CODE_TAG_NAME).item(0).getTextContent())){
-                        String avgCurrency = el.getElementsByTagName(resolveExchangeType(xType)
-                        ).item(0).getTextContent();
-                        return parseUtils.parseValueToCurrency(avgCurrency);
-                    }
-                }
-            }
-        }
-        } catch (ParseException | SAXException | IOException ex) {
-            throw  new RuntimeException("Could not parse XML: ", ex);
-        }
-        throw new RuntimeException("XML parsing could not be completed");
-    }
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(TableOfCurrencies.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            StringReader reader = new StringReader(body);
+            TableOfCurrencies tableOfCurrencies = (TableOfCurrencies) jaxbUnmarshaller.unmarshal(reader);
+            List<TableOfCurrencies.Position> positions = tableOfCurrencies.getPositions();
+            Optional<TableOfCurrencies.Position> currencyTable = positions.stream().filter(t -> t.getCurrencyCode().equals(currency)).findFirst();
+            TableOfCurrencies.Position filteredPosition = currencyTable.orElseThrow(() -> new JAXBException("Value for given currency is null - possibly XML document has changed"));
+            String output =
+                    xType.equals(ExchangeType.BUY) ? filteredPosition.getBid()
+                            : filteredPosition.getSell();
 
-    private String resolveExchangeType(ExchangeType xType) {
-        return xType.equals(ExchangeType.BUY)
-                ? BUYING_RATE
-                : SELLING_RATE;
+            // TODO: czy wydzielać metody oraz wzorzec strategia na koniec
+            return parseUtils.parseValueToCurrency(output);
+
+        } catch (JAXBException ex) {
+            throw new RuntimeException("Could not parse XML: ", ex);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        throw new RuntimeException("XML parsing could not be completed");
     }
 }

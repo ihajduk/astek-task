@@ -43,7 +43,7 @@ public class UrlUtils {
         if(matcher.find()){
             return String.format("%s%s.xml", NBP_URL, matcher.group(0));
         }
-        throw new RuntimeException(new UnregisteredDateException("Given date: " + date + " is not recorded in currency data"));
+        throw new UnregisteredDateException("Given date: " + date + " is not recorded in currency data");
     }
 
     private String getYearSuffix(LocalDate date) {
