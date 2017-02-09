@@ -2,7 +2,7 @@ package pl.parser.nbp.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.parser.nbp.model.ExchangeType;
+import pl.parser.nbp.model.ExchangeTypeHolder;
 import pl.parser.nbp.model.TableOfCurrencies;
 
 import javax.xml.bind.JAXBContext;
@@ -19,22 +19,23 @@ import java.util.Optional;
 public class XmlReaderUtils {
 
     private final ParseUtils parseUtils;
+    private final JAXBContext jaxbContext;
+    private final Unmarshaller jaxbUnmarshaller;
 
     @Autowired
-    public XmlReaderUtils(ParseUtils parseUtils) throws ParserConfigurationException {
+    public XmlReaderUtils(ParseUtils parseUtils) throws ParserConfigurationException, JAXBException {
         this.parseUtils = parseUtils;
+        jaxbContext = JAXBContext.newInstance(TableOfCurrencies.class);
+        jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     }
 
-    public BigDecimal acquireAvgRateFromXmlFile(String currency, ExchangeType xType, String body) {
+    public BigDecimal acquireAvgRateFromXmlFile(String currency, ExchangeTypeHolder xType, String body) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(TableOfCurrencies.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            StringReader reader = new StringReader(body);
-            TableOfCurrencies tableOfCurrencies = (TableOfCurrencies) jaxbUnmarshaller.unmarshal(reader);
+            TableOfCurrencies tableOfCurrencies = unmarshalTableOfCurrencies(body);
             List<TableOfCurrencies.Position> positions = tableOfCurrencies.getPositions();
             Optional<TableOfCurrencies.Position> currencyTable = positions.stream().filter(t -> t.getCurrencyCode().equals(currency)).findFirst();
             TableOfCurrencies.Position filteredPosition = currencyTable.orElseThrow(() -> new JAXBException("Value for given currency is null - possibly XML document has changed"));
-            String outputAvgRate = xType.getRateValue(filteredPosition);
+            String outputAvgRate = xType.getExchangeValue(filteredPosition);
             return parseUtils.parseValueToCurrency(outputAvgRate);
         } catch (JAXBException ex) {
             throw new RuntimeException("Could not parse XML: ", ex);
@@ -43,5 +44,8 @@ public class XmlReaderUtils {
         }
     }
 
-
+    private TableOfCurrencies unmarshalTableOfCurrencies(String body) throws JAXBException {
+        StringReader reader = new StringReader(body);
+        return (TableOfCurrencies) jaxbUnmarshaller.unmarshal(reader);
+    }
 }

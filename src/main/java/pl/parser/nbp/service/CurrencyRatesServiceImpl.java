@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.parser.nbp.model.Currencies;
-import pl.parser.nbp.model.ExchangeType;
+import pl.parser.nbp.model.ExchangeTypeHolder;
 import pl.parser.nbp.model.RatesStatistics;
 import pl.parser.nbp.utils.ArithmeticUtils;
 import pl.parser.nbp.utils.ParseUtils;
@@ -33,11 +33,11 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         LocalDate startDate = parseUtils.parseStringToDate(startDateString);
         LocalDate endDate = parseUtils.parseStringToDate(endDateString);
 
-        BigDecimal startDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeType.BUY, startDate);
-        BigDecimal endDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeType.BUY, endDate);
+        BigDecimal startDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.BUY, startDate);
+        BigDecimal endDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.BUY, endDate);
 
-        BigDecimal startDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeType.SELL, startDate);
-        BigDecimal endDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeType.SELL, endDate);
+        BigDecimal startDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.SELL, startDate);
+        BigDecimal endDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.SELL, endDate);
 
         BigDecimal avgBuyingRate = arithmeticUtils.computeAvgRate(startDateAvgBuyRate, endDateAvgBuyRate);
         BigDecimal avgSellingRate = arithmeticUtils.computeAvgRate(startDateAvgSellRate, endDateAvgSellRate);

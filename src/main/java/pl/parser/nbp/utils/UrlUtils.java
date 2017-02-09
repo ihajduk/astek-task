@@ -3,7 +3,7 @@ package pl.parser.nbp.utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.parser.nbp.exceptions.UnregisteredDateException;
-import pl.parser.nbp.model.ExchangeType;
+import pl.parser.nbp.model.ExchangeTypeHolder;
 import pl.parser.nbp.web.RestConnector;
 
 import java.math.BigDecimal;
@@ -27,7 +27,7 @@ public class UrlUtils {
         this.restConnector = restConnector;
     }
 
-    public BigDecimal acquireAvgRateForCurrency(String currency, ExchangeType xType, LocalDate date) {
+    public BigDecimal acquireAvgRateForCurrency(String currency, ExchangeTypeHolder xType, LocalDate date) {
         String urlToRatesForDate = resolveUrlToRatesForDate(date);
         String responseXmlData = restConnector.downloadData(urlToRatesForDate);
         return xmlReaderUtils.acquireAvgRateFromXmlFile(currency, xType, responseXmlData);
