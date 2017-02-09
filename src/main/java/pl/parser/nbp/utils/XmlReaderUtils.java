@@ -19,13 +19,12 @@ import java.util.Optional;
 public class XmlReaderUtils {
 
     private final ParseUtils parseUtils;
-    private final JAXBContext jaxbContext;
     private final Unmarshaller jaxbUnmarshaller;
 
     @Autowired
     public XmlReaderUtils(ParseUtils parseUtils) throws ParserConfigurationException, JAXBException {
         this.parseUtils = parseUtils;
-        jaxbContext = JAXBContext.newInstance(TableOfCurrencies.class);
+        JAXBContext jaxbContext = JAXBContext.newInstance(TableOfCurrencies.class);
         jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     }
 
@@ -33,8 +32,11 @@ public class XmlReaderUtils {
         try {
             TableOfCurrencies tableOfCurrencies = unmarshalTableOfCurrencies(body);
             List<TableOfCurrencies.Position> positions = tableOfCurrencies.getPositions();
-            Optional<TableOfCurrencies.Position> currencyTable = positions.stream().filter(t -> t.getCurrencyCode().equals(currency)).findFirst();
-            TableOfCurrencies.Position filteredPosition = currencyTable.orElseThrow(() -> new JAXBException("Value for given currency is null - possibly XML document has changed"));
+            Optional<TableOfCurrencies.Position> currencyTable = positions.stream()
+                    .filter(t -> t.getCurrencyCode().equals(currency))
+                    .findFirst();
+            TableOfCurrencies.Position filteredPosition = currencyTable.orElseThrow(
+                    () -> new JAXBException("Value for given currency is null - possibly XML document has changed"));
             String outputAvgRate = xType.getExchangeValue(filteredPosition);
             return parseUtils.parseValueToCurrency(outputAvgRate);
         } catch (JAXBException ex) {
