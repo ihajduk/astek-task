@@ -37,7 +37,7 @@ public class ParseUtils {
         return commaSeparatedNumberFormat.format(value);
     }
 
-    public BigDecimal parseValueToCurrency(String value) throws ParseException {
+    public BigDecimal parseStringToCurrency(String value) throws ParseException {
         return BigDecimal.valueOf(commaSeparatedNumberFormat.parse(value).doubleValue()).setScale(precision, BigDecimal.ROUND_HALF_EVEN);
     }
 }

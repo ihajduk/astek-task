@@ -38,7 +38,7 @@ public class XmlReaderUtils {
             TableOfCurrencies.Position filteredPosition = currencyTable.orElseThrow(
                     () -> new JAXBException("Value for given currency is null - possibly XML document has changed"));
             String outputAvgRate = xType.getExchangeValue(filteredPosition);
-            return parseUtils.parseValueToCurrency(outputAvgRate);
+            return parseUtils.parseStringToCurrency(outputAvgRate);
         } catch (JAXBException ex) {
             throw new RuntimeException("Could not parse XML: ", ex);
         } catch (ParseException ex) {

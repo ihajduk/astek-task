@@ -26,8 +26,8 @@ public class ArithmeticUtils {
         BigDecimal sum = Arrays.stream(rates)
                 .map(rate -> avgRate.subtract(rate).pow(2))
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .divide(BigDecimal.valueOf(rates.length), 4);
+                .divide(BigDecimal.valueOf(rates.length), precision);
 
-        return BigDecimal.valueOf(Math.sqrt(sum.doubleValue())).setScale(4, RoundingMode.HALF_EVEN);
+        return BigDecimal.valueOf(Math.sqrt(sum.doubleValue())).setScale(precision, RoundingMode.HALF_EVEN);
     }
 }
