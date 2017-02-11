@@ -28,21 +28,21 @@ public class XmlReaderUtils {
         jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     }
 
-    public BigDecimal acquireAvgRateFromXmlFile(String currency, ExchangeTypeHolder xType, String body) {
+    public BigDecimal acquireAvgRateFromXmlBody(String currencyCode, ExchangeTypeHolder xType, String body) {
         try {
             TableOfCurrencies tableOfCurrencies = unmarshalTableOfCurrencies(body);
             List<TableOfCurrencies.Position> positions = tableOfCurrencies.getPositions();
             Optional<TableOfCurrencies.Position> currencyTable = positions.stream()
-                    .filter(t -> t.getCurrencyCode().equals(currency))
+                    .filter(t -> t.getCurrencyCode().equals(currencyCode))
                     .findFirst();
             TableOfCurrencies.Position filteredPosition = currencyTable.orElseThrow(
-                    () -> new JAXBException("Value for given currency is null - possibly XML document has changed"));
+                    () -> new JAXBException("Value for given currencyCode is null - possibly XML document has changed"));
             String outputAvgRate = xType.getExchangeValue(filteredPosition);
             return parseUtils.parseStringToCurrency(outputAvgRate);
         } catch (JAXBException ex) {
             throw new RuntimeException("Could not parse XML: ", ex);
         } catch (ParseException ex) {
-            throw new RuntimeException("Could not parse currency: ", ex);
+            throw new RuntimeException("Could not parse currencyCode: ", ex);
         }
     }
 

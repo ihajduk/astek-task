@@ -61,7 +61,7 @@ public class ParseUtilsTest {
     }
 
     @Test
-    public void should() throws ParseException {
+    public void shouldParseStringToCurrency() throws ParseException {
         //given
         String value = "3,1400";
         //when

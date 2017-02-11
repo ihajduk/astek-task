@@ -27,10 +27,10 @@ public class UrlUtils {
         this.restConnector = restConnector;
     }
 
-    public BigDecimal acquireAvgRateForCurrency(String currency, ExchangeTypeHolder xType, LocalDate date) {
+    public BigDecimal acquireAvgRateForCurrency(String currencyCode, ExchangeTypeHolder xType, LocalDate date) {
         String urlToRatesForDate = resolveUrlToRatesForDate(date);
         String responseXmlData = restConnector.downloadData(urlToRatesForDate);
-        return xmlReaderUtils.acquireAvgRateFromXmlFile(currency, xType, responseXmlData);
+        return xmlReaderUtils.acquireAvgRateFromXmlBody(currencyCode, xType, responseXmlData);
     }
 
     private String resolveUrlToRatesForDate(LocalDate date) {
