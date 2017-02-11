@@ -4,14 +4,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import pl.parser.nbp.SpringConfig;
+import org.springframework.test.context.junit4.SpringRunner;
+import pl.parser.nbp.Application;
 
 import java.math.BigDecimal;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SpringConfig.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class ArithmeticUtilsTest {
 
     @Autowired

@@ -5,17 +5,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import pl.parser.nbp.SpringConfig;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SpringConfig.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class ParseUtilsTest {
 
     @Autowired
