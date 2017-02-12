@@ -1,5 +1,7 @@
 package pl.parser.nbp.model;
 
+import lombok.Getter;
+
 import javax.xml.bind.annotation.*;
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class TableOfCurrencies {
         return positions;
     }
 
+    @Getter
     public static class Position {
         @XmlElement(name = "nazwa_waluty")
         private String currencyName;
@@ -30,15 +33,5 @@ public class TableOfCurrencies {
         private String bid;
         @XmlElement(name = "kurs_sprzedazy")
         private String sell;
-
-        public String getCurrencyCode() {
-            return currencyCode;
-        }
-        public String getBid() {
-            return bid;
-        }
-        public String getSell() {
-            return sell;
-        }
     }
 }
