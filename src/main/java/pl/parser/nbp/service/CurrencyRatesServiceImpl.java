@@ -27,17 +27,18 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         this.arithmeticUtils = arithmeticUtils;
     }
 
-    public RatesStatistics computeRatesStatistics(String currency, String startDateString, String endDateString) {
-        Preconditions.checkArgument(Currencies.isValidCurrency(currency), "Wrong currency");
+    public RatesStatistics computeRatesStatistics(String currencyCode, String startDateString, String endDateString) {
+        // TODO: ten precondition też do wywalenia
+        Preconditions.checkArgument(Currencies.isValidCurrency(currencyCode), "Wrong currency");
 
         LocalDate startDate = parseUtils.parseStringToDate(startDateString);
         LocalDate endDate = parseUtils.parseStringToDate(endDateString);
 
-        BigDecimal startDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.BUY, startDate);
-        BigDecimal endDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.BUY, endDate);
+        BigDecimal startDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.BUY, startDate);
+        BigDecimal endDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.BUY, endDate);
 
-        BigDecimal startDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.SELL, startDate);
-        BigDecimal endDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currency, ExchangeTypeHolder.SELL, endDate);
+        BigDecimal startDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.SELL, startDate);
+        BigDecimal endDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.SELL, endDate);
 
         BigDecimal avgBuyingRate = arithmeticUtils.computeAvgRate(startDateAvgBuyRate, endDateAvgBuyRate);
         BigDecimal avgSellingRate = arithmeticUtils.computeAvgRate(startDateAvgSellRate, endDateAvgSellRate);

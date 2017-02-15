@@ -19,7 +19,7 @@ public class CurrencyRatesController {
     }
 
     @RequestMapping(value = "/rate-statistics", method = RequestMethod.GET)
-    public RatesStatistics getRateStatistics(String currency, String startDateString, String endDateString){
-        return currencyRatesService.computeRatesStatistics(currency, startDateString, endDateString);
+    public RatesStatistics getRateStatistics(String currencyCode, String startDateString, String endDateString){
+        return currencyRatesService.computeRatesStatistics(currencyCode, startDateString, endDateString);
     }
 }

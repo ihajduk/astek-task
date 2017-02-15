@@ -8,7 +8,7 @@ public enum Currencies {
 
     public static boolean isValidCurrency(String currencyString){
         for(Currencies currency : values()){
-            if(currency.name().equalsIgnoreCase(currencyString))
+            if(currency.name().equals(currencyString))
                 return true;
         }
         return false;
