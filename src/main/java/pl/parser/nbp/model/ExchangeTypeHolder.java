@@ -1,5 +1,7 @@
 package pl.parser.nbp.model;
 
+import pl.parser.nbp.model.xml.TableOfCurrencies;
+
 public enum ExchangeTypeHolder {
     BUY {
         @Override

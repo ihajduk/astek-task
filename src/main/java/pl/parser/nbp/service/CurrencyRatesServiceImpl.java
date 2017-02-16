@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.parser.nbp.model.Currencies;
 import pl.parser.nbp.model.ExchangeTypeHolder;
-import pl.parser.nbp.model.RatesStatistics;
+import pl.parser.nbp.model.response.CurrencyStatsResponse;
+import pl.parser.nbp.model.request.CurrencyStatsRequest;
 import pl.parser.nbp.utils.ArithmeticUtils;
 import pl.parser.nbp.utils.ParseUtils;
 import pl.parser.nbp.utils.UrlUtils;
@@ -27,18 +28,17 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         this.arithmeticUtils = arithmeticUtils;
     }
 
-    public RatesStatistics computeRatesStatistics(String currencyCode, String startDateString, String endDateString) {
-        // TODO: ten precondition też do wywalenia
-        Preconditions.checkArgument(Currencies.isValidCurrency(currencyCode), "Wrong currency");
+    @Override
+    public CurrencyStatsResponse computeRatesStatistics(CurrencyStatsRequest currencyStatsRequest) {
 
-        LocalDate startDate = parseUtils.parseStringToDate(startDateString);
-        LocalDate endDate = parseUtils.parseStringToDate(endDateString);
+        LocalDate startDate = parseUtils.parseStringToDate(currencyStatsRequest.getStartDateString());
+        LocalDate endDate = parseUtils.parseStringToDate(currencyStatsRequest.getEndDateString());
 
-        BigDecimal startDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.BUY, startDate);
-        BigDecimal endDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.BUY, endDate);
+        BigDecimal startDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currencyStatsRequest.getCurrencyCode(), ExchangeTypeHolder.BUY, startDate);
+        BigDecimal endDateAvgBuyRate = urlUtils.acquireAvgRateForCurrency(currencyStatsRequest.getCurrencyCode(), ExchangeTypeHolder.BUY, endDate);
 
-        BigDecimal startDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.SELL, startDate);
-        BigDecimal endDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currencyCode, ExchangeTypeHolder.SELL, endDate);
+        BigDecimal startDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currencyStatsRequest.getCurrencyCode(), ExchangeTypeHolder.SELL, startDate);
+        BigDecimal endDateAvgSellRate = urlUtils.acquireAvgRateForCurrency(currencyStatsRequest.getCurrencyCode(), ExchangeTypeHolder.SELL, endDate);
 
         BigDecimal avgBuyingRate = arithmeticUtils.computeAvgRate(startDateAvgBuyRate, endDateAvgBuyRate);
         BigDecimal avgSellingRate = arithmeticUtils.computeAvgRate(startDateAvgSellRate, endDateAvgSellRate);
@@ -48,6 +48,6 @@ public class CurrencyRatesServiceImpl implements CurrencyRatesService {
         String outputAvgRate = parseUtils.formatValueToCurrencyString(avgBuyingRate);
         String outputStdDev = parseUtils.formatValueToCurrencyString(standardDeviationBetweenRates);
 
-        return new RatesStatistics(outputAvgRate, outputStdDev);
+        return new CurrencyStatsResponse(outputAvgRate, outputStdDev);
     }
 }

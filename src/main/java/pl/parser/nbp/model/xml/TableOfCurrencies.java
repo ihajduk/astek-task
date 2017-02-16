@@ -1,4 +1,4 @@
-package pl.parser.nbp.model;
+package pl.parser.nbp.model.xml;
 
 import lombok.Getter;
 

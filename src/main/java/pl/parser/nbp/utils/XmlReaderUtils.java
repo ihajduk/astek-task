@@ -3,7 +3,7 @@ package pl.parser.nbp.utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.parser.nbp.model.ExchangeTypeHolder;
-import pl.parser.nbp.model.TableOfCurrencies;
+import pl.parser.nbp.model.xml.TableOfCurrencies;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
