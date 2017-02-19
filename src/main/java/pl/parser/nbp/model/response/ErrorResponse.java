@@ -1,13 +1,9 @@
 package pl.parser.nbp.model.response;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class ErrorResponse {
-    private int errorCode;
-    private String message;
+    private final int statusCode;
+    private final String message;
 }
