@@ -1,9 +1,7 @@
 package pl.parser.nbp.service;
 
-import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.parser.nbp.model.Currencies;
 import pl.parser.nbp.model.ExchangeTypeHolder;
 import pl.parser.nbp.model.response.CurrencyStatsResponse;
 import pl.parser.nbp.model.request.CurrencyStatsRequest;
