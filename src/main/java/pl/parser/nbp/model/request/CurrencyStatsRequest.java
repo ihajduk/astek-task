@@ -8,9 +8,9 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Data
-public class CurrencyStatsRequest implements Serializable {
+public class CurrencyStatsRequest {
 
-    @Pattern(regexp = CurrencyCodes.ALLOWED_CURRENCIES, message = "Wrong currency")
+    @Pattern(regexp = CurrencyCodes.ALLOWED_CURRENCIES_PATTERN, message = "Wrong currency")
     private String currencyCode;
     @NotNull
     private String startDateString;
