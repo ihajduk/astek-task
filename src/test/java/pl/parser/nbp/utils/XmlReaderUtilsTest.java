@@ -25,7 +25,7 @@ public class XmlReaderUtilsTest {
         //given
         String currencyCode = "EUR";
         ExchangeTypeHolder xTypeHolder = ExchangeTypeHolder.BUY;
-        String xmlBodyFilePath = "src/test/resources/table-of-currencies-body";
+        String xmlBodyFilePath = "src/test/resources/table-of-currencies-body-sample";
         String xmlBody = new String(Files.readAllBytes(Paths.get(xmlBodyFilePath)));
         //when
         BigDecimal avgRate = xmlReaderUtils.acquireAvgRateFromXmlBody(currencyCode, xTypeHolder, xmlBody);
