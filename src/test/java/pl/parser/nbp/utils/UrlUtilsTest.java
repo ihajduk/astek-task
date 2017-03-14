@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -17,28 +18,20 @@ import pl.parser.nbp.web.RestConnector;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@SpringBootTest
 public class UrlUtilsTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    @Value("${currency.precision}")
-    private int precision;
+    @InjectMocks
+    private UrlUtils urlUtils;
 
-    UrlUtils urlUtils;
-
-    @Spy
-    ParseUtils parseUtils = new ParseUtils(precision);
     @Mock
-    RestConnector restConnector;
+    private XmlReaderUtils xmlReaderUtils;
     @Mock
-    XmlReaderUtils xmlReaderUtils;
-
-    @Before
-    public void setUp() {
-        urlUtils = new UrlUtils(xmlReaderUtils, parseUtils, restConnector);
-    }
+    private ParseUtils parseUtils;
+    @Mock
+    private RestConnector restConnector;
 
     /**
      * 1. Cannot mock private methods of urlUtils
@@ -48,12 +41,13 @@ public class UrlUtilsTest {
     public void shouldAcquireAvgRateForCurrency() {
         //given
         String currencyCode = "EUR";
+        ExchangeTypeHolder xTypeHolder = ExchangeTypeHolder.BUY;
+        LocalDate localDate = LocalDate.of(2015, 2, 13);
         String urlToTableNames = "http://www.nbp.pl/kursy/xml/dir2015.txt";
         String urlToDatesForRate = "http://www.nbp.pl/kursy/xml/c030z150213.xml";
         String mockedXmlBody = "<xml>whatever</xml>";
-        ExchangeTypeHolder xTypeHolder = ExchangeTypeHolder.BUY;
-        LocalDate localDate = LocalDate.of(2015, 2, 13);
         Mockito.when(restConnector.downloadData(urlToTableNames)).thenReturn("c030z150213");
+        Mockito.when(parseUtils.parseDateToUrlFormat(localDate)).thenReturn("150213");
         Mockito.when(restConnector.downloadData(urlToDatesForRate)).thenReturn(mockedXmlBody);
         Mockito.when(xmlReaderUtils.acquireAvgRateFromXmlBody(currencyCode, xTypeHolder, mockedXmlBody)).thenReturn(BigDecimal.ONE);
         //when

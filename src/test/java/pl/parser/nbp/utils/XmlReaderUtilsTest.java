@@ -1,35 +1,39 @@
 package pl.parser.nbp.utils;
 
-import org.junit.Assert;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import pl.parser.nbp.model.ExchangeTypeHolder;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class XmlReaderUtilsTest {
 
-    @Autowired
-    XmlReaderUtils xmlReaderUtils;
+    @Mock
+    private ParseUtils parseUtils;
+
+    @InjectMocks
+    private XmlReaderUtils xmlReaderUtils;
 
     @Test
-    public void shouldAcquireAvgRateFromXmlBody() throws IOException {
+    public void shouldAcquireAvgRateFromXmlBody() throws Exception {
         //given
         String currencyCode = "EUR";
         ExchangeTypeHolder xTypeHolder = ExchangeTypeHolder.BUY;
         String xmlBodyFilePath = "src/test/resources/table-of-currencies-body-sample";
         String xmlBody = new String(Files.readAllBytes(Paths.get(xmlBodyFilePath)));
+        BigDecimal outputAvgRate = BigDecimal.valueOf(4.1397);
+        Mockito.when(parseUtils.parseStringToCurrency("4,1397")).thenReturn(outputAvgRate);
         //when
         BigDecimal avgRate = xmlReaderUtils.acquireAvgRateFromXmlBody(currencyCode, xTypeHolder, xmlBody);
         //then
-        Assert.assertEquals(avgRate, BigDecimal.valueOf(4.1397));
+        Assertions.assertThat(avgRate).isEqualTo(outputAvgRate);
     }
 }
