@@ -3,18 +3,16 @@ package pl.parser.nbp.utils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class ArithmeticUtilsTest {
 
-    @Autowired
-    private ArithmeticUtils arithmeticUtils;
+    private static final int PRECISION = 4;
+
+    private ArithmeticUtils arithmeticUtils = new ArithmeticUtils(PRECISION);
 
     @Test
     public void shouldComputeAvgRate() throws Exception {
