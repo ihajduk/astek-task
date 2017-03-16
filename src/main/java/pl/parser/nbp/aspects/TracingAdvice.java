@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class TracingAdvice {
 
-    Logger logger = LoggerFactory.getLogger(TracingAdvice.class);
+    private final Logger log = LoggerFactory.getLogger(TracingAdvice.class);
 
     @Before("execution(* pl.parser.nbp.*.*.*(..))")
     public void currencyCodeToUpperCase(JoinPoint joinPoint) {
-        logger.info("entering " + joinPoint.getStaticPart().getSignature().toString());
+        log.info("entering " + joinPoint.getStaticPart().getSignature().toString());
     }
 
 }
